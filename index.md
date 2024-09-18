@@ -15,7 +15,7 @@ hero:
       link: /guide/introduction
     - theme: alt
       text: 协助改进或翻译文档
-      link: https://github.com/jamebal/jmalcloud.github.io
+      link: https://github.com/jmalcloud/jmalcloud.github.io
 
 features:
   - title: 自托管和自主控制

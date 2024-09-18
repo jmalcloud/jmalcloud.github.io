@@ -28,7 +28,7 @@ export const cn = defineConfig({
       copyright: '版权所有 © 2024-present JmalCloud',
     },
     editLink: {
-      pattern: 'https://github.com/jamebal/jmalcloud.github.io/main/:path',
+      pattern: 'https://github.com/jmalcloud/jmalcloud.github.io/main/:path',
       text: '在 GitHub 上编辑此页面',
     },
     docFooter: {

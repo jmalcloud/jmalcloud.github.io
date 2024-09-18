@@ -15,7 +15,7 @@ hero:
       link: /en/guide/introduction
     - theme: alt
       text: Contribute or Translate Documentation
-      link: https://github.com/jamebal/jmalcloud.github.io
+      link: https://github.com/jmalcloud/jmalcloud.github.io
 
 features:
   - title: Self-hosted and Autonomous Control
