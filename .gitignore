@@ -3,6 +3,7 @@
 .DS_Store
 .idea
 .temp
+pnpm-lock.yaml
 .vite_opt_cache
 .vscode
 !.vscode/settings.json
