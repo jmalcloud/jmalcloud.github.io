@@ -1,7 +1,5 @@
 # 部署后无法查看office文档
 
-假设网盘地址为: http://localhost:7070, 则office地址为: http://localhost:7071/office/
-
 外层nginx需要加上`proxy_set_header Host $http_host;`
 ```nginx
 location ^~ / {
