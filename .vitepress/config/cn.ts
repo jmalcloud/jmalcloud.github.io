@@ -22,6 +22,12 @@ export const cn = defineConfig({
           { text: '添加本地目录', link: '/guide/aq/add-local-folder' },
         ],
       },
+      {
+        text: '其他',
+        items: [
+          { text: 'iframe 预览', link: '/guide/other/iframe-preview' },
+        ],
+      },
     ],
     footer: {
       message: '基于 MIT License 许可发布',

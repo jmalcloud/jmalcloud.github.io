@@ -22,6 +22,12 @@ export const en = defineConfig({
           { text: 'Add Local Directory', link: '/en/guide/aq/add-local-folder' },
         ],
       },
+      {
+        text: 'Other',
+        items: [
+          { text: 'iframe Preview', link: '/guide/other/iframe-preview' },
+        ],
+      },
     ],
     footer: {
       message: 'Published under the MIT License',
