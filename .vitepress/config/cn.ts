@@ -18,8 +18,9 @@ export const cn = defineConfig({
         text: '常见问题',
         items: [
           { text: '重置管理员密码', link: '/guide/aq/reset-pass' },
-          { text: '部署后无法查看office文档', link: '/guide/aq/office-502' },
           { text: '添加本地目录', link: '/guide/aq/add-local-folder' },
+          { text: '部署后无法查看office文档', link: '/guide/aq/office-502' },
+          { text: '博客问题', link: '/guide/aq/blog' },
         ],
       },
       {
