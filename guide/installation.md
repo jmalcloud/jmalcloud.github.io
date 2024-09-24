@@ -46,10 +46,10 @@ services:
       TZ: "Asia/Shanghai"
     links:
       - jmalcloud
-      - office
+      - office # 下面去掉了office这里也要删除
     restart: unless-stopped
 
-  office: # Optional
+  office: # 不想使用office功能可以去掉
     container_name: jmalcloud_office
     image: onlyoffice/documentserver:8.0.1
     environment:
