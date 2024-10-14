@@ -32,6 +32,8 @@ services:
     volumes:
       - ./docker/jmalcloud/files:/jmalcloud/files/
     restart: unless-stopped
+    ports:
+      - 7072:8088
     depends_on:
       mongo:
         condition: service_healthy
@@ -64,7 +66,13 @@ services:
 docker compose up -d
 ```
 
-After starting, visit: http://{your_ip}:7070
+## JmalCloud address
+
+JmalCloud address: http://{your_ip}:7070
+
+## JmalCloud API address
+
+JmalCloud API address: http://{your_ip}:7072/public/api
 
 ## Backup/Restore Database
 

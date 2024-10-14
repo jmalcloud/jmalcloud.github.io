@@ -32,6 +32,8 @@ services:
     volumes:
       - ./docker/jmalcloud/files:/jmalcloud/files/
     restart: unless-stopped
+    ports:
+       - 7072:8088
     depends_on:
       mongo:
         condition: service_healthy
@@ -86,6 +88,8 @@ services:
       volumes:
          - ./docker/jmalcloud/files:/jmalcloud/files/
       restart: unless-stopped
+      ports:
+         - 7072:8088
       depends_on:
          mongo:
             condition: service_healthy
@@ -139,6 +143,8 @@ services:
       volumes:
          - ./docker/jmalcloud/files:/jmalcloud/files/
       restart: unless-stopped
+      ports:
+         - 7072:8088
       depends_on:
          mongo:
             condition: service_healthy
@@ -170,8 +176,14 @@ services:
 docker compose up -d
 ```
 
-等待启动后访问: http://{your_ip}:7070
+## 网盘地址
 
+网盘地址: http://{your_ip}:7070
+
+
+## 网盘API地址
+
+API地址: http://{your_ip}:7072/public/api
 
 ## 备份/恢复 数据库
 
@@ -186,3 +198,4 @@ docker exec -it jmalcloud_mongodb mongodump -d jmalcloud -o /dump/back --gzip --
 ```bash
 docker exec -it jmalcloud_mongodb mongorestore --gzip --nsInclude=jmalcloud.* --dir /dump/back --quiet
 ```
+
