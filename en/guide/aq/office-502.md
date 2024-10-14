@@ -1,11 +1,12 @@
 # Unable to View Office Documents After Deployment
 
-Assuming the cloud disk address is: `http://localhost:7070`, then the office address should be: `http://localhost:7071/office/`.
+## 1. Issue with Office Documents not Accessible when using HTTP Proxy and the Port is not 80/443
 
-The outer nginx configuration needs to include:
-```nginx
-proxy_set_header Host $http_host;
-```
+In the case where the web disk is wrapped by an HTTP proxy and the port is not 80/443, Office documents may not be accessible.
+
+Using Nginx as an example:
+
+You need to add proxy_set_header Host $http_host; to the outer Nginx configuration.
 ```nginx
 location ^~ / {
     proxy_pass http://localhost:7070; 
@@ -23,3 +24,18 @@ location ^~ / {
     add_header Strict-Transport-Security "max-age=31536000"; 
 }
 ```
+
+## 2. The Format of the Document Security Token is Incorrect. Please Contact Your Document Server Administrator.
+
+In the web disk settings, under OnlyOffice, enter the JWT_SECRET from the docker-compose.yml file.
+
+```yaml
+  office:
+    container_name: jmalcloud_office
+    image: onlyoffice/documentserver:8.0.1
+    environment:
+      TZ: "Asia/Shanghai"
+      JWT_SECRET: "my_secret"
+    restart: unless-stopped
+```
+For example, the secret key here is: my_secret.
