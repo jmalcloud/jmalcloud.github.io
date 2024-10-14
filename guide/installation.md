@@ -183,6 +183,8 @@ docker compose up -d
 
 ## 网盘API地址
 
+需暴露服务端端口
+
 API地址: http://{your_ip}:7072/public/api
 
 ## 备份/恢复 数据库
