@@ -15,7 +15,7 @@
     "url": "git+https://github.com/jmalcloud/jmalcloud.github.io"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.7.3",
+    "@antfu/eslint-config": "^3.8.0",
     "eslint": "^9.12.0",
     "eslint-plugin-format": "^0.1.2",
     "mermaid": "^11.3.0",
