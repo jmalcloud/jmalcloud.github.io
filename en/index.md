@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: Preview
-      link: https://jmal.cc/demo?username=demo&password=demo1234
+      link: https://jmal.cc/demo/login?username=demo&password=demo1234
     - theme: alt
       text: Get Started
       link: /en/guide/introduction
