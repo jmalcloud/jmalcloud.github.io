@@ -12,6 +12,7 @@ export const cn = defineConfig({
           { text: '简介', link: '/guide/introduction' },
           { text: '安装', link: '/guide/installation' },
           { text: 'dev', link: '/guide/dev' },
+          { text: '配合Syncthing实现文件同步', link: '/guide/syncthing' },
         ],
       },
       {
