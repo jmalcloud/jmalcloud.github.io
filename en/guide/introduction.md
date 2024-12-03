@@ -4,7 +4,7 @@ A private cloud storage project that allows you to manage your cloud files simpl
 
 ## Demo:
 
-[Demo](https://jmal.cc/demo), Username: demo, Password: demo1234
+[Demo](https://jmal.cc/demo/login?username=demo&password=demo1234), Username: demo, Password: demo1234
 
 ## Features
 
