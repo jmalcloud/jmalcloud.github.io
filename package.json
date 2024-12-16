@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.11.2",
-    "eslint": "^9.16.0",
+    "eslint": "^9.17.0",
     "eslint-plugin-format": "^0.1.2",
     "mermaid": "^11.4.1",
     "vitepress": "^1.5.0",
