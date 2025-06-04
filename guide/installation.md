@@ -28,7 +28,6 @@ services:
     environment:
       MONGODB_URI: "mongodb://mongo:27017/jmalcloud"
       TZ: "Asia/Shanghai"
-      JVM_OPTS: "-Xms256m -Xmx1024m"
     volumes:
       - ./docker/jmalcloud/files:/jmalcloud/files/
     restart: unless-stopped
@@ -84,7 +83,6 @@ services:
       environment:
          MONGODB_URI: "mongodb://mongo:27017/jmalcloud"
          TZ: "Asia/Shanghai"
-         JVM_OPTS: "-Xms256m -Xmx1024m"
       volumes:
          - ./docker/jmalcloud/files:/jmalcloud/files/
       restart: unless-stopped
@@ -139,7 +137,6 @@ services:
       environment:
          MONGODB_URI: "mongodb://mongo:27017/jmalcloud"
          TZ: "Asia/Shanghai"
-         JVM_OPTS: "-Xms256m -Xmx1024m"
       volumes:
          - ./docker/jmalcloud/files:/jmalcloud/files/
       restart: unless-stopped
