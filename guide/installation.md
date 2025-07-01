@@ -272,7 +272,9 @@ services:
 - **默认值**: `warn`
 - **配置建议**: 可选。
 
-### 启动
+:::
+
+**启动**
 ```bash
 docker compose up -d
 ```
