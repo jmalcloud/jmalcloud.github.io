@@ -8,7 +8,7 @@
 services:
   mongo:
     container_name: jmalcloud_mongodb
-    image: mongo:4.4
+    image: mongo:7.0
     environment:
       TZ: "Asia/Shanghai"
     volumes:
@@ -52,7 +52,7 @@ services:
 
   office: # 不想使用office功能可以去掉
     container_name: jmalcloud_office
-    image: onlyoffice/documentserver:8.0.1
+    image: onlyoffice/documentserver:9.0
     environment:
       TZ: "Asia/Shanghai"
       JWT_SECRET: "my_secret"
