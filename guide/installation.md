@@ -16,7 +16,7 @@ services:
       - ./docker/jmalcloud/mongodb/backup:/dump
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -28,14 +28,15 @@ services:
     environment:
       MONGODB_URI: "mongodb://mongo:27017/jmalcloud"
       TZ: "Asia/Shanghai"
+      JVM_OPTS: "-Xms512m -Xmx4g"
+      EXACT_SEARCH: false
+      PUID: 1000
+      PGID: 1000
     volumes:
       - ./docker/jmalcloud/files:/jmalcloud/files/
     restart: unless-stopped
     ports:
-       - 7072:8088
-    depends_on:
-      mongo:
-        condition: service_healthy
+      - 7072:8088
 
   nginx:
     container_name: jmalcloud_nginx
@@ -45,12 +46,12 @@ services:
       - 7071:8089
     environment:
       TZ: "Asia/Shanghai"
+    restart: unless-stopped
     links:
       - jmalcloud
-      - office # 下面去掉了office这里也要删除
-    restart: unless-stopped
+      - office
 
-  office: # 不想使用office功能可以去掉
+  office: # Optional
     container_name: jmalcloud_office
     image: onlyoffice/documentserver:9.0
     environment:
