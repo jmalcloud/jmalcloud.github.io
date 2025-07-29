@@ -32,10 +32,10 @@ services:
       EXACT_SEARCH: false
       PUID: 1000
       PGID: 1000
-      # 请务必修改此默认值(openssl rand -hex 32)
-      ENCRYPTION_SECRET_KEY: 3df759ce9f6dab43580830785b67a6afa934a18cd70f7b17ae17e81ee685c02e
-      # 请务必修改此默认值(openssl rand -hex 16)
-      ENCRYPTION_SALT: 2b4f6681ea2167b33630e1fd283cade9
+      # 如果为空系统会自动生成(位置在/jmalcloud/files/.env)(openssl rand -hex 32)
+      ENCRYPTION_SECRET_KEY: ""
+      # 如果为空系统会自动生成(位置在/jmalcloud/files/.env)(openssl rand -hex 32)
+      ENCRYPTION_SALT: ""
     volumes:
       - ./docker/jmalcloud/files:/jmalcloud/files/
     restart: unless-stopped
@@ -92,10 +92,10 @@ services:
       EXACT_SEARCH: false
       PUID: 1000
       PGID: 1000
-      # 请务必修改此默认值(openssl rand -hex 32)
-      ENCRYPTION_SECRET_KEY: 3df759ce9f6dab43580830785b67a6afa934a18cd70f7b17ae17e81ee685c02e
-      # 请务必修改此默认值(openssl rand -hex 16)
-      ENCRYPTION_SALT: 2b4f6681ea2167b33630e1fd283cade9
+      # 如果为空系统会自动生成(位置在/jmalcloud/files/.env)(openssl rand -hex 32)
+      ENCRYPTION_SECRET_KEY: ""
+      # 如果为空系统会自动生成(位置在/jmalcloud/files/.env)(openssl rand -hex 32)
+      ENCRYPTION_SALT: ""
     volumes:
       - ./docker/jmalcloud/files:/jmalcloud/files/
     restart: unless-stopped
@@ -233,14 +233,14 @@ services:
 - **类型**: `String`
 - **示例值**: `3df759ce9f6dab43580830785b67a6afa934a18cd70f7b17ae17e81ee685c02e`
 - **默认值**: `3df759ce9f6dab43580830785b67a6afa934a18cd70f7b17ae17e81ee685c02e`
-- **配置建议**: 必需。建议使用至少32字节的随机字符串，可通过 openssl rand -hex 32 生成。
+- **配置建议**: 必需。如果为空系统会自动生成(位置在/jmalcloud/files/.env), 建议使用至少32字节的随机字符串，可通过 openssl rand -hex 32 生成。
 
 #### `ENCRYPTION_SALT`
 - **描述**: 加密过程中使用的盐值，用于增加加密的安全性，防止彩虹表攻击。每个应用实例应使用唯一的盐值。
 - **类型**: `String`
 - **示例值**: `2b4f6681ea2167b33630e1fd283cade9`
 - **默认值**: `2b4f6681ea2167b33630e1fd283cade9`
-- **配置建议**: 必需。建议使用至少16字节的随机字符串，可通过 openssl rand -hex 16 生成。
+- **配置建议**: 必需。如果为空系统会自动生成(位置在/jmalcloud/files/.env), 建议使用至少16字节的随机字符串，可通过 openssl rand -hex 16 生成。
 
 :::
 
