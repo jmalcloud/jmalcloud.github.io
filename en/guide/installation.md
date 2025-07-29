@@ -32,6 +32,10 @@ services:
       EXACT_SEARCH: false
       PUID: 1000
       PGID: 1000
+      # Make sure to change this default value(openssl rand -hex 32)
+      ENCRYPTION_SECRET_KEY: 3df759ce9f6dab43580830785b67a6afa934a18cd70f7b17ae17e81ee685c02e
+      # Make sure to change this default value(openssl rand -hex 16)
+      ENCRYPTION_SALT: 2b4f6681ea2167b33630e1fd283cade9
     volumes:
       - ./docker/jmalcloud/files:/jmalcloud/files/
     restart: unless-stopped
@@ -163,6 +167,20 @@ Below is a list of environment variables for configuring the `jmalcloud` applica
 - **Example Value**: `info`
 - **Default Value**: `warn`
 - **Recommendation**: Optional.
+
+#### `ENCRYPTION_SECRET_KEY`
+- **Description**: The key used for data encryption and decryption. This key should be a strong random string to protect the security of sensitive data.
+- **Type**: `String`
+- **Example Value**: `3df759ce9f6dab43580830785b67a6afa934a18cd70f7b17ae17e81ee685c02e`
+- **Default Value**: `3df759ce9f6dab43580830785b67a6afa934a18cd70f7b17ae17e81ee685c02e`
+- **Recommendation**: Required. It is recommended to use a random string of at least 32 bytes, which can be generated using `openssl rand -hex 32`.
+
+#### `ENCRYPTION_SALT`
+- **Description**: The salt value used in the encryption process to enhance encryption security and prevent rainbow table attacks. Each application instance should use a unique salt value.
+- **Type**: `String`
+- **Example Value**: `2b4f6681ea2167b33630e1fd283cade9`
+- **Default Value**: `2b4f6681ea2167b33630e1fd283cade9`
+- **Recommendation**: Required. It is recommended to use a random string of at least 16 bytes, which can be generated using `openssl rand -hex 16`.
 
 :::
 

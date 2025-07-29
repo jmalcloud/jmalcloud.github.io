@@ -32,6 +32,10 @@ services:
       EXACT_SEARCH: false
       PUID: 1000
       PGID: 1000
+      # 请务必修改此默认值(openssl rand -hex 32)
+      ENCRYPTION_SECRET_KEY: 3df759ce9f6dab43580830785b67a6afa934a18cd70f7b17ae17e81ee685c02e
+      # 请务必修改此默认值(openssl rand -hex 16)
+      ENCRYPTION_SALT: 2b4f6681ea2167b33630e1fd283cade9
     volumes:
       - ./docker/jmalcloud/files:/jmalcloud/files/
     restart: unless-stopped
@@ -60,113 +64,64 @@ services:
     restart: unless-stopped
 ```
 
-```yaml [阿里云镜像-x86]
+```yaml [镜像加速]
 services:
-   mongo:
-      container_name: jmalcloud_mongodb
-      image: registry.cn-beijing.aliyuncs.com/jmalcloud/mongo:4.4
-      environment:
-         TZ: "Asia/Shanghai"
-      volumes:
-         - ./docker/jmalcloud/mongodb/data/db:/data/db
-         - ./docker/jmalcloud/mongodb/backup:/dump
-      restart: unless-stopped
-      healthcheck:
-         test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
-         interval: 10s
-         timeout: 5s
-         retries: 3
-      command: --wiredTigerCacheSizeGB 0.5
+  mongo:
+    container_name: jmalcloud_mongodb
+    image: docker.jmalx.com/library/mongo:7.0
+    environment:
+      TZ: "Asia/Shanghai"
+    volumes:
+      - ./docker/jmalcloud/mongodb/data/db:/data/db
+      - ./docker/jmalcloud/mongodb/backup:/dump
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    command: --wiredTigerCacheSizeGB 0.5
 
-   jmalcloud:
-      container_name: jmalcloud_server
-      image: registry.cn-beijing.aliyuncs.com/jmalcloud/jmalcloud:latest
-      environment:
-         MONGODB_URI: "mongodb://mongo:27017/jmalcloud"
-         TZ: "Asia/Shanghai"
-      volumes:
-         - ./docker/jmalcloud/files:/jmalcloud/files/
-      restart: unless-stopped
-      ports:
-         - 7072:8088
-      depends_on:
-         mongo:
-            condition: service_healthy
+  jmalcloud:
+    container_name: jmalcloud_server
+    image: docker.jmalx.com/jmal/jmalcloud:latest
+    environment:
+      MONGODB_URI: "mongodb://mongo:27017/jmalcloud"
+      TZ: "Asia/Shanghai"
+      JVM_OPTS: "-Xms512m -Xmx4g"
+      EXACT_SEARCH: false
+      PUID: 1000
+      PGID: 1000
+      # 请务必修改此默认值(openssl rand -hex 32)
+      ENCRYPTION_SECRET_KEY: 3df759ce9f6dab43580830785b67a6afa934a18cd70f7b17ae17e81ee685c02e
+      # 请务必修改此默认值(openssl rand -hex 16)
+      ENCRYPTION_SALT: 2b4f6681ea2167b33630e1fd283cade9
+    volumes:
+      - ./docker/jmalcloud/files:/jmalcloud/files/
+    restart: unless-stopped
+    ports:
+      - 7072:8088
 
-   nginx:
-      container_name: jmalcloud_nginx
-      image: registry.cn-beijing.aliyuncs.com/jmalcloud/jmalcloud-nginx:latest
-      ports:
-         - 7070:80
-         - 7071:8089
-      environment:
-         TZ: "Asia/Shanghai"
-      links:
-         - jmalcloud
-         - office
-      restart: unless-stopped
+  nginx:
+    container_name: jmalcloud_nginx
+    image: docker.jmalx.com/jmal/jmalcloud-nginx:latest
+    ports:
+      - 7070:80
+      - 7071:8089
+    environment:
+      TZ: "Asia/Shanghai"
+    restart: unless-stopped
+    links:
+      - jmalcloud
+      - office
 
-   office: # Optional
-      container_name: jmalcloud_office
-      image: registry.cn-beijing.aliyuncs.com/jmalcloud/onlyoffice_documentserver:8.0.1
-      environment:
-         TZ: "Asia/Shanghai"
-         JWT_SECRET: "my_secret"
-      restart: unless-stopped
-```
-```yaml [阿里云镜像-arm64]
-services:
-   mongo:
-      container_name: jmalcloud_mongodb
-      image: registry.cn-beijing.aliyuncs.com/jmalcloud/mongo:4.4-arm64
-      environment:
-         TZ: "Asia/Shanghai"
-      volumes:
-         - ./docker/jmalcloud/mongodb/data/db:/data/db
-         - ./docker/jmalcloud/mongodb/backup:/dump
-      restart: unless-stopped
-      healthcheck:
-         test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
-         interval: 10s
-         timeout: 5s
-         retries: 3
-      command: --wiredTigerCacheSizeGB 0.5
-
-   jmalcloud:
-      container_name: jmalcloud_server
-      image: registry.cn-beijing.aliyuncs.com/jmalcloud/jmalcloud:latest-arm64
-      environment:
-         MONGODB_URI: "mongodb://mongo:27017/jmalcloud"
-         TZ: "Asia/Shanghai"
-      volumes:
-         - ./docker/jmalcloud/files:/jmalcloud/files/
-      restart: unless-stopped
-      ports:
-         - 7072:8088
-      depends_on:
-         mongo:
-            condition: service_healthy
-
-   nginx:
-      container_name: jmalcloud_nginx
-      image: registry.cn-beijing.aliyuncs.com/jmalcloud/jmalcloud-nginx:latest-arm64
-      ports:
-         - 7070:80
-         - 7071:8089
-      environment:
-         TZ: "Asia/Shanghai"
-      links:
-         - jmalcloud
-         - office
-      restart: unless-stopped
-
-   office: # Optional
-      container_name: jmalcloud_office
-      image: registry.cn-beijing.aliyuncs.com/jmalcloud/onlyoffice_documentserver:8.0.1-arm64
-      environment:
-         TZ: "Asia/Shanghai"
-         JWT_SECRET: "my_secret"
-      restart: unless-stopped
+  office: # Optional
+    container_name: jmalcloud_office
+    image: docker.jmalx.com/onlyoffice/documentserver:9.0
+    environment:
+      TZ: "Asia/Shanghai"
+      JWT_SECRET: "my_secret"
+    restart: unless-stopped
 ```
 
 ### 环境变量
@@ -272,6 +227,20 @@ services:
 - **示例值**: `info`
 - **默认值**: `warn`
 - **配置建议**: 可选。
+
+#### `ENCRYPTION_SECRET_KEY`
+- **描述**: 用于数据加密和解密的密钥。该密钥应为强随机字符串，用于保护敏感数据的安全性。
+- **类型**: `String`
+- **示例值**: `3df759ce9f6dab43580830785b67a6afa934a18cd70f7b17ae17e81ee685c02e`
+- **默认值**: `3df759ce9f6dab43580830785b67a6afa934a18cd70f7b17ae17e81ee685c02e`
+- **配置建议**: 必需。建议使用至少32字节的随机字符串，可通过 openssl rand -hex 32 生成。
+
+#### `ENCRYPTION_SALT`
+- **描述**: 加密过程中使用的盐值，用于增加加密的安全性，防止彩虹表攻击。每个应用实例应使用唯一的盐值。
+- **类型**: `String`
+- **示例值**: `2b4f6681ea2167b33630e1fd283cade9`
+- **默认值**: `2b4f6681ea2167b33630e1fd283cade9`
+- **配置建议**: 必需。建议使用至少16字节的随机字符串，可通过 openssl rand -hex 16 生成。
 
 :::
 
