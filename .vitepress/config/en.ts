@@ -12,6 +12,8 @@ export const en = defineConfig({
           { text: 'Introduction', link: '/en/guide/introduction' },
           { text: 'Installation', link: '/en/guide/installation' },
           { text: 'Development', link: '/en/guide/dev' },
+          { text: 'Document preview with onlyoffice', link: '/en/guide/onlyoffice' },
+          { text: 'File synchronization with Syncthing', link: '/en/guide/syncthing' },
         ],
       },
       {
@@ -20,7 +22,6 @@ export const en = defineConfig({
           { text: 'Reset Admin Password', link: '/en/guide/aq/reset-pass' },
           { text: 'Cannot View Office Documents After Deployment', link: '/en/guide/aq/office-502' },
           { text: 'Add Local Directory', link: '/en/guide/aq/add-local-folder' },
-          { text: 'Blog Issues', link: '/en/guide/aq/blog' },
         ],
       },
       {

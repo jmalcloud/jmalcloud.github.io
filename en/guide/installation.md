@@ -1,67 +1,40 @@
 # Installation {#installation}
 
-**Install via Docker Compose**
+## **Docker**
 
-::: code-group
+```shell
+docker run -d \
+  --name jmalcloud \
+  -p 8088:8088 \
+  -v /opt/jmalcloud:/jmalcloud/files \
+  --restart always \
+  jmal/jmalcloud-sql:test
+```
 
-```yaml [docker-compose.yml]
+## **Docker Compose**
+
+```yaml
 services:
-  mongo:
-    container_name: jmalcloud_mongodb
-    image: mongo:7.0
-    environment:
-      TZ: "Asia/Shanghai"
-    volumes:
-      - ./docker/jmalcloud/mongodb/data/db:/data/db
-      - ./docker/jmalcloud/mongodb/backup:/dump
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    command: --wiredTigerCacheSizeGB 0.5
-
   jmalcloud:
-    container_name: jmalcloud_server
-    image: jmal/jmalcloud:latest
+    container_name: jmalcloud
+    image: jmal/jmalcloud-sql:test
     environment:
-      MONGODB_URI: "mongodb://mongo:27017/jmalcloud"
-      TZ: "Asia/Shanghai"
-      JVM_OPTS: "-Xms512m -Xmx4g"
-      EXACT_SEARCH: false
-      PUID: 1000
-      PGID: 1000
-      # If it is empty, the system will automatically generate it (located at /jmalcloud/files/.env) (openssl rand -hex 32)
+      PUID: 0
+      PGID: 0
+      # It is recommended to use `openssl rand -hex 32` to generate a key
       ENCRYPTION_SECRET_KEY: ""
-      # If it is empty, the system will automatically generate it (located at /jmalcloud/files/.env) (openssl rand -hex 16)
+      # It is recommended to use `openssl rand -hex 16` to generate a key
       ENCRYPTION_SALT: ""
+    ports:
+      - 8088:8088
     volumes:
-      - ./docker/jmalcloud/files:/jmalcloud/files/
-    restart: unless-stopped
-    ports:
-      - 7072:8088
+      - ./jmalcloud/files:/jmalcloud/files
+    restart: always
+```
 
-  nginx:
-    container_name: jmalcloud_nginx
-    image: jmal/jmalcloud-nginx:latest
-    ports:
-      - 7070:80
-      - 7071:8089
-    environment:
-      TZ: "Asia/Shanghai"
-    restart: unless-stopped
-    links:
-      - jmalcloud
-      - office
-
-  office: # Optional
-    container_name: jmalcloud_office
-    image: onlyoffice/documentserver:9.0
-    environment:
-      TZ: "Asia/Shanghai"
-      JWT_SECRET: "my_secret"
-    restart: unless-stopped
+**Start**
+```bash
+docker compose up -d
 ```
 
 ### Environment Variables
@@ -182,31 +155,98 @@ Below is a list of environment variables for configuring the `jmalcloud` applica
 - **Default Value**: `2b4f6681ea2167b33630e1fd283cade9`
 - **Recommendation**: Required. If it is empty, the system will automatically generate it (located at /jmalcloud/files/.env). It is recommended to use a random string of at least 16 bytes, which can be generated using `openssl rand -hex 16`.
 
-:::
+#### `RESET_ADMIN_PASSWORD`
+- **Description**: Whether to reset the administrator password. When set to `true`, the system will reset the administrator password to the default value `jmalcloud` upon the next startup.
+- **Type**: `String`
+- **Example Value**: `false`
+- **Default Value**: `false`
+- **Recommendation**: Optional.
 
-**Start**
-```bash
-docker compose up -d
+#### `DATA_BASE_TYPE`
+- **Description**: Database types, supporting four types of databases: `sqlite`, `mongodb`, `mysql`, `postgresql`.
+- **Type**: `String`
+- **Example Value**: `sqlite`
+- **Default Value**: `sqlite`
+- **Recommendation**: Optional.
+
+## MySQL
+
+**Please deploy the MySQL service yourself.**
+
+```yaml
+services:
+  jmalcloud:
+    container_name: jmalcloud
+    image: jmal/jmalcloud-sql:latest
+    environment:
+      DATA_BASE_TYPE: mysql
+      DATABASE_HOST: mysql_host
+      DATABASE_PORT: 3306
+      DATABASE_NAME: jmalcloud
+      DATABASE_USER: jmalcloud_user
+      DATABASE_PASSWORD: jmalcloud_pass
+      PUID: 0
+      PGID: 0
+      # It is recommended to use `openssl rand -hex 32` to generate a key
+      ENCRYPTION_SECRET_KEY: ""
+      # It is recommended to use `openssl rand -hex 16` to generate a key
+      ENCRYPTION_SALT: ""
+    ports:
+      - 8088:8088
+    volumes:
+      - ./jmalcloud/files:/jmalcloud/files
+    restart: always
 ```
 
-## JmalCloud address
+## PostgreSQL
 
-JmalCloud address: http://{your_ip}:7070
+**Please deploy the PostgreSQL service yourself.**
 
-## JmalCloud API address
-
-JmalCloud API address: http://{your_ip}:7072/public/api
-
-## Backup/Restore Database
-
-### Backup Database
-
-```bash
-docker exec -it jmalcloud_mongodb mongodump -d jmalcloud -o /dump/back --gzip --quiet
+```yaml
+services:
+  jmalcloud:
+    container_name: jmalcloud
+    image: jmal/jmalcloud-sql:latest
+    environment:
+      DATA_BASE_TYPE: postgresql
+      DATABASE_HOST: postgresql_host
+      DATABASE_PORT: 3306
+      DATABASE_NAME: jmalcloud
+      DATABASE_USER: jmalcloud_user
+      DATABASE_PASSWORD: jmalcloud_pass
+      PUID: 0
+      PGID: 0
+      # It is recommended to use `openssl rand -hex 32` to generate a key
+      ENCRYPTION_SECRET_KEY: ""
+      # It is recommended to use `openssl rand -hex 16` to generate a key
+      ENCRYPTION_SALT: ""
+    ports:
+      - 8088:8088
+    volumes:
+      - ./jmalcloud/files:/jmalcloud/files
+    restart: always
 ```
 
-### Restore Database
+## MongoDB
 
-```bash
-docker exec -it jmalcloud_mongodb mongorestore --gzip --nsInclude=jmalcloud.* --dir /dump/back --quiet
+**Please deploy the MongoDB service yourself.**
+
+```yaml
+services:
+  jmalcloud:
+    container_name: jmalcloud
+    image: jmal/jmalcloud:latest
+    environment:
+      MONGODB_URI: mongodb://username:pass@mongo_host:27017/jmalcloud?authSource=admin
+      PUID: 0
+      PGID: 0
+      # It is recommended to use `openssl rand -hex 32` to generate a key
+      ENCRYPTION_SECRET_KEY: ""
+      # It is recommended to use `openssl rand -hex 16` to generate a key
+      ENCRYPTION_SALT: ""
+    ports:
+      - 8088:8088
+    volumes:
+      - ./jmalcloud/files:/jmalcloud/files
+    restart: always
 ```

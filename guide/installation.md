@@ -1,130 +1,46 @@
 # 安装 {#installation}
 
-**通过Docker Compose安装**  
+## **Docker**
 
-   ::: code-group			
-   
-```yaml [docker-compose.yml]
-services:
-  mongo:
-    container_name: jmalcloud_mongodb
-    image: mongo:7.0
-    environment:
-      TZ: "Asia/Shanghai"
-    volumes:
-      - ./docker/jmalcloud/mongodb/data/db:/data/db
-      - ./docker/jmalcloud/mongodb/backup:/dump
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    command: --wiredTigerCacheSizeGB 0.5
-
-  jmalcloud:
-    container_name: jmalcloud_server
-    image: jmal/jmalcloud:latest
-    environment:
-      MONGODB_URI: "mongodb://mongo:27017/jmalcloud"
-      TZ: "Asia/Shanghai"
-      JVM_OPTS: "-Xms512m -Xmx4g"
-      EXACT_SEARCH: false
-      PUID: 1000
-      PGID: 1000
-      # 如果为空系统会自动生成(位置在/jmalcloud/files/.env)(openssl rand -hex 32)
-      ENCRYPTION_SECRET_KEY: ""
-      # 如果为空系统会自动生成(位置在/jmalcloud/files/.env)(openssl rand -hex 32)
-      ENCRYPTION_SALT: ""
-    volumes:
-      - ./docker/jmalcloud/files:/jmalcloud/files/
-    restart: unless-stopped
-    ports:
-      - 7072:8088
-
-  nginx:
-    container_name: jmalcloud_nginx
-    image: jmal/jmalcloud-nginx:latest
-    ports:
-      - 7070:80
-      - 7071:8089
-    environment:
-      TZ: "Asia/Shanghai"
-    restart: unless-stopped
-    links:
-      - jmalcloud
-      - office
-
-  office: # Optional
-    container_name: jmalcloud_office
-    image: onlyoffice/documentserver:9.0
-    environment:
-      TZ: "Asia/Shanghai"
-      JWT_SECRET: "my_secret"
-    restart: unless-stopped
+```shell
+docker run -d \
+  --name jmalcloud \
+  -p 8088:8088 \
+  -v ./jmalcloud/files:/jmalcloud/files \
+  --restart always \
+  jmal/jmalcloud-sql:test
 ```
 
-```yaml [镜像加速]
+访问 `http://your-domain-or-ip:8088` 即可使用。
+
+## **Docker Compose**  
+
+```yaml
 services:
-  mongo:
-    container_name: jmalcloud_mongodb
-    image: docker.jmalx.com/library/mongo:7.0
-    environment:
-      TZ: "Asia/Shanghai"
-    volumes:
-      - ./docker/jmalcloud/mongodb/data/db:/data/db
-      - ./docker/jmalcloud/mongodb/backup:/dump
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    command: --wiredTigerCacheSizeGB 0.5
-
   jmalcloud:
-    container_name: jmalcloud_server
-    image: docker.jmalx.com/jmal/jmalcloud:latest
+    container_name: jmalcloud
+    image: jmal/jmalcloud-sql:test
     environment:
-      MONGODB_URI: "mongodb://mongo:27017/jmalcloud"
-      TZ: "Asia/Shanghai"
-      JVM_OPTS: "-Xms512m -Xmx4g"
-      EXACT_SEARCH: false
-      PUID: 1000
-      PGID: 1000
-      # 如果为空系统会自动生成(位置在/jmalcloud/files/.env)(openssl rand -hex 32)
-      ENCRYPTION_SECRET_KEY: ""
-      # 如果为空系统会自动生成(位置在/jmalcloud/files/.env)(openssl rand -hex 32)
-      ENCRYPTION_SALT: ""
+      PUID: 0
+      PGID: 0
+      LOG_LEVEL: info
+      # 此处建议使用`openssl rand -hex 32`生成密钥
+      ENCRYPTION_SECRET_KEY: ed4b83f7e2e1fc0b0d0d3583d8474cb400c704614ae2b83adc011113a318e878
+      # 此处建议使用`openssl rand -hex 16`生成密钥
+      ENCRYPTION_SALT: 9234d49a5b8d38173f34fbf37bca474b
+    ports:
+      - 8088:8088
     volumes:
-      - ./docker/jmalcloud/files:/jmalcloud/files/
-    restart: unless-stopped
-    ports:
-      - 7072:8088
-
-  nginx:
-    container_name: jmalcloud_nginx
-    image: docker.jmalx.com/jmal/jmalcloud-nginx:latest
-    ports:
-      - 7070:80
-      - 7071:8089
-    environment:
-      TZ: "Asia/Shanghai"
-    restart: unless-stopped
-    links:
-      - jmalcloud
-      - office
-
-  office: # Optional
-    container_name: jmalcloud_office
-    image: docker.jmalx.com/onlyoffice/documentserver:9.0
-    environment:
-      TZ: "Asia/Shanghai"
-      JWT_SECRET: "my_secret"
-    restart: unless-stopped
+      - ./jmalcloud/files:/jmalcloud/files
+    restart: always
 ```
 
-### 环境变量
+**启动**
+```bash
+docker compose up -d
+```
+
+## 环境变量
 
 以下是可用于配置 `jmalcloud` 应用的环境变量及其详细说明。请根据您的需求进行设置。
 
@@ -242,35 +158,241 @@ services:
 - **默认值**: `2b4f6681ea2167b33630e1fd283cade9`
 - **配置建议**: 必需。如果为空系统会自动生成(位置在/jmalcloud/files/.env), 建议使用至少16字节的随机字符串，可通过 openssl rand -hex 16 生成。
 
+#### `RESET_ADMIN_PASSWORD`
+- **描述**: 是否重置管理员密码。设置为 `true` 时，系统将在下次启动时将管理员密码重置为默认值 `jmalcloud`。
+- **类型**: `String`
+- **示例值**: `false`
+- **默认值**: `false`
+- **配置建议**: 可选。
+
+#### `DATA_BASE_TYPE`
+- **描述**: 数据库类型，支持四种数据库: `sqlite`, `mongodb`, `mysql`, `postgresql`。
+- **类型**: `String`
+- **示例值**: `sqlite`
+- **默认值**: `sqlite`
+- **配置建议**: 可选。
+
+
+## MySQL
+
+::: code-group
+```yaml [自部署MySQL服务]
+services:
+  jmalcloud:
+    container_name: jmalcloud
+    image: jmal/jmalcloud-sql:latest
+    environment:
+      DATA_BASE_TYPE: mysql
+      DATABASE_HOST: your_mysql_host
+      DATABASE_PORT: 3306
+      DATABASE_NAME: your_database_name
+      DATABASE_USER: your_database_user
+      DATABASE_PASSWORD: your_database_pass
+      PUID: 0
+      PGID: 0
+      LOG_LEVEL: info
+      # 此处建议使用`openssl rand -hex 32`生成密钥
+      ENCRYPTION_SECRET_KEY: ed4b83f7e2e1fc0b0d0d3583d8474cb400c704614ae2b83adc011113a318e878
+      # 此处建议使用`openssl rand -hex 16`生成密钥
+      ENCRYPTION_SALT: 9234d49a5b8d38173f34fbf37bca474b
+    ports:
+      - 8088:8088
+    volumes:
+      - ./jmalcloud/files:/jmalcloud/files
+    restart: always
+```
+```yaml [完整示例：包含MySQL服务]
+services:
+  jmalcloud:
+    container_name: jmalcloud
+    image: jmal/jmalcloud-sql:latest
+    environment:
+      DATA_BASE_TYPE: mysql
+      DATABASE_HOST: mysql
+      DATABASE_PORT: 3306
+      DATABASE_NAME: jmalcloud
+      DATABASE_USER: jmalcloud_user
+      DATABASE_PASSWORD: jmalcloud_pass
+      PUID: 0
+      PGID: 0
+      LOG_LEVEL: info
+      # 此处建议使用`openssl rand -hex 32`生成密钥
+      ENCRYPTION_SECRET_KEY: ed4b83f7e2e1fc0b0d0d3583d8474cb400c704614ae2b83adc011113a318e878
+      # 此处建议使用`openssl rand -hex 16`生成密钥
+      ENCRYPTION_SALT: 9234d49a5b8d38173f34fbf37bca474b
+    ports:
+      - 8089:8088
+    volumes:
+      - ./jmalcloud/files:/jmalcloud/files
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+  mysql:
+    container_name: jmalcloud_mysql
+    ports:
+      - 3307:3306
+    user: "1000:1001"
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql_root_pass
+      MYSQL_DATABASE: jmalcloud
+      MYSQL_USER: jmalcloud_user
+      MYSQL_PASSWORD: jmalcloud_pass
+    image: mysql:8.1
+    restart: always
+    volumes:
+      - ./jmalcloud/db/data/:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin ping -h localhost -ujmalcloud_user -pjmalcloud_pass"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+```
 :::
 
-**启动**
-```bash
-docker compose up -d
+
+## PostgreSQL
+
+::: code-group
+```yaml [部署PostgreSQL服务]
+services:
+  jmalcloud:
+    container_name: jmalcloud
+    image: jmal/jmalcloud-sql:latest
+    environment:
+      DATA_BASE_TYPE: postgresql
+      DATABASE_HOST: postgresql_host
+      DATABASE_PORT: 3306
+      DATABASE_NAME: jmalcloud
+      DATABASE_USER: jmalcloud_user
+      DATABASE_PASSWORD: jmalcloud_pass
+      PUID: 0
+      PGID: 0
+      LOG_LEVEL: info
+      # 此处建议使用`openssl rand -hex 32`生成密钥
+      ENCRYPTION_SECRET_KEY: ed4b83f7e2e1fc0b0d0d3583d8474cb400c704614ae2b83adc011113a318e878
+      # 此处建议使用`openssl rand -hex 16`生成密钥
+      ENCRYPTION_SALT: 9234d49a5b8d38173f34fbf37bca474b
+    ports:
+      - 8088:8088
+    volumes:
+      - ./jmalcloud/files:/jmalcloud/files
+    restart: always
 ```
 
-## 网盘地址
+```yaml [完整示例：包含PostgreSQL服务]
+services:
+  jmalcloud:
+    container_name: jmalcloud_test
+    image: jmal/jmalcloud-sql:latest
+    environment:
+      DATA_BASE_TYPE: postgresql
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: jmalcloud
+      DATABASE_USER: jmalcloud_user
+      DATABASE_PASSWORD: jmalcloud_pass
+      PUID: 0
+      PGID: 0
+      LOG_LEVEL: info
+      # 此处建议使用`openssl rand -hex 32`生成密钥
+      ENCRYPTION_SECRET_KEY: ed4b83f7e2e1fc0b0d0d3583d8474cb400c704614ae2b83adc011113a318e878
+      # 此处建议使用`openssl rand -hex 16`生成密钥
+      ENCRYPTION_SALT: 9234d49a5b8d38173f34fbf37bca474b
+    ports:
+      - 8089:8088
+    volumes:
+      - ./jmalcloud/files:/jmalcloud/files
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: library/postgres:17
+    container_name: jmalcloud_postgresql
+    environment:
+      POSTGRES_USER: jmalcloud_user
+      POSTGRES_PASSWORD: jmalcloud_pass
+      POSTGRES_DB: jmalcloud
+      PGDATA: /var/lib/postgresql/data/pgdata
+      TZ: Asia/Shanghai
+    volumes:
+      - ./jmalcloud/db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jmalcloud_user -d jmalcloud"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+```
+:::
 
-网盘地址: http://{your_ip}:7070
+## MongoDB
 
+**请自部署MongoDB服务**
 
-## 网盘API地址
-
-需暴露服务端端口
-
-API地址: http://{your_ip}:7072/public/api
-
-## 备份/恢复 数据库
-
-### 备份数据库
-
-```bash
-docker exec -it jmalcloud_mongodb mongodump -d jmalcloud -o /dump/back --gzip --quiet
+::: code-group
+```yaml [自部署MongoDB服务]
+services:
+  jmalcloud:
+    container_name: jmalcloud
+    image: jmal/jmalcloud:latest
+    environment:
+      MONGODB_URI: mongodb://mongo_user:mongo_pass@your_mongo_host:27017/jmalcloud?authSource=admin
+      PUID: 0
+      PGID: 0
+      LOG_LEVEL: info
+      # 此处建议使用`openssl rand -hex 32`生成密钥
+      ENCRYPTION_SECRET_KEY: ed4b83f7e2e1fc0b0d0d3583d8474cb400c704614ae2b83adc011113a318e878
+      # 此处建议使用`openssl rand -hex 16`生成密钥
+      ENCRYPTION_SALT: 9234d49a5b8d38173f34fbf37bca474b
+    ports:
+      - 8088:8088
+    volumes:
+      - ./jmalcloud/files:/jmalcloud/files
+    restart: always
 ```
 
-### 恢复数据库
-
-```bash
-docker exec -it jmalcloud_mongodb mongorestore --gzip --nsInclude=jmalcloud.* --dir /dump/back --quiet
+```yaml [完整示例：包含MongoDB服务]
+services:
+  jmalcloud:
+    container_name: jmalcloud
+    image: jmal/jmalcloud:latest
+    environment:
+      MONGODB_URI: mongodb://mongo_user:mongo_pass@mongodb:27017/jmalcloud?authSource=admin
+      PUID: 0
+      PGID: 0
+      LOG_LEVEL: info
+      # 此处建议使用`openssl rand -hex 32`生成密钥
+      ENCRYPTION_SECRET_KEY: ed4b83f7e2e1fc0b0d0d3583d8474cb400c704614ae2b83adc011113a318e878
+      # 此处建议使用`openssl rand -hex 16`生成密钥
+      ENCRYPTION_SALT: 9234d49a5b8d38173f34fbf37bca474b
+    ports:
+      - 8088:8088
+    volumes:
+      - ./jmalcloud/files:/jmalcloud/files
+    restart: always
+    depends_on:
+      mongodb:
+        condition: service_healthy
+  mongodb:
+    container_name: jmalcloud_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: mongo_pass
+    image: mongo:7.0.21
+    restart: always
+    healthcheck:
+      test:
+        - CMD
+        - mongosh
+        - --eval
+        - db.adminCommand('ping')
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - ./jmalcloud/db:/data/db
 ```
-
+:::

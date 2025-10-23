@@ -1,9 +1,11 @@
 # 重置管理员密码
 
-```bash
-# 1. 重置密码
-docker exec -it jmalcloud_mongodb mongo jmalcloud --eval "db.getCollection('user').update({ 'creator': true }, {\$set: { 'password': '1000:c5b705ea13a1221f5e59110947ed806f8a978e955fbd2ed6:22508de12228c34a235454a0caf3bcaa5552858543258e56' }}, { 'multi': false, 'upsert': false })"
-# 2. 重启容器
-docker restart jmalcloud_server
-# 重置后的密码为: jmalcloud
+添加环境变量[RESET_ADMIN_PASSWORD](/guide/installation.html#reset-admin-password),
+系统将在下次启动时将管理员密码重置, 具体密码请查看**日志**, 重置后请务必将 `RESET_ADMIN_PASSWORD` 移除或设置为false以防止重复重置。
+
+```yaml
+  services:
+    jmalcloud:
+      environment:
+        RESET_ADMIN_PASSWORD: true
 ```

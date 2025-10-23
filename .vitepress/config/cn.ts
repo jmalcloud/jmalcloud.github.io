@@ -12,6 +12,7 @@ export const cn = defineConfig({
           { text: '简介', link: '/guide/introduction' },
           { text: '安装', link: '/guide/installation' },
           { text: 'dev', link: '/guide/dev' },
+          { text: '配合onlyoffice实现文档预览', link: '/guide/onlyoffice' },
           { text: '配合Syncthing实现文件同步', link: '/guide/syncthing' },
         ],
       },
@@ -21,7 +22,6 @@ export const cn = defineConfig({
           { text: '重置管理员密码', link: '/guide/aq/reset-pass' },
           { text: '添加本地目录', link: '/guide/aq/add-local-folder' },
           { text: '部署后无法查看office文档', link: '/guide/aq/office-502' },
-          { text: '博客问题', link: '/guide/aq/blog' },
         ],
       },
       {

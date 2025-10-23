@@ -1,6 +1,6 @@
-# 配合[Syncthing](https://syncthing.net/)实现文件同步
+# # Work with [Syncthing](https://syncthing.net/) for file synchronization
 
-## 在现有docker-compose中加入,以下配置即可
+## Just add the following configuration to your existing docker-compose
 ```yaml
   syncthing:
     image: lscr.io/linuxserver/syncthing:latest
@@ -22,7 +22,7 @@
 
 ![alt text](/assets/syncthing-add-folder.png)
 
-### 完整示例： 
+### Complete example:
 ```yaml
 services:
   jmalcloud:

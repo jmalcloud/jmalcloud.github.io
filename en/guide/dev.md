@@ -1,8 +1,7 @@
 # Development
 
 #### Environment Preparation:
-- jdk17+
-- mongodb4.4+
+- jdk21+
 - node v16.x.x
 
 ## Backend

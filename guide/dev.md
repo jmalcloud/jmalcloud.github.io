@@ -1,8 +1,7 @@
 # dev
 
 #### 环境准备:
-- jdk17+
-- mongodb4.4+
+- jdk21+
 - node v16.x.x
 
 ## 服务端
