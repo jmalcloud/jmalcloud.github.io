@@ -329,7 +329,9 @@ services:
 
 ## MongoDB
 
-**请自部署MongoDB服务**
+**⚠️注意**: 如果CPU不支持AVX指令集, 请使用MongoDB 4.4版本
+
+查看cpu是否支持AVX指令集: `lscpu | grep avx`
 
 ::: code-group
 ```yaml [自部署MongoDB服务]
@@ -388,6 +390,84 @@ services:
         - mongosh
         - --eval
         - db.adminCommand('ping')
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - ./jmalcloud/db:/data/db
+```
+
+```yaml [完整示例：包含MongoDB服务(5.0+版本)]
+services:
+  jmalcloud:
+    container_name: jmalcloud
+    image: jmal/jmalcloud:latest
+    environment:
+      MONGODB_URI: mongodb://mongo_user:mongo_pass@mongodb:27017/jmalcloud?authSource=admin
+      PUID: 0
+      PGID: 0
+      LOG_LEVEL: info
+      # 此处建议使用`openssl rand -hex 32`生成密钥
+      ENCRYPTION_SECRET_KEY: ed4b83f7e2e1fc0b0d0d3583d8474cb400c704614ae2b83adc011113a318e878
+      # 此处建议使用`openssl rand -hex 16`生成密钥
+      ENCRYPTION_SALT: 9234d49a5b8d38173f34fbf37bca474b
+    ports:
+      - 8088:8088
+    volumes:
+      - ./jmalcloud/files:/jmalcloud/files
+    restart: always
+    depends_on:
+      mongodb:
+        condition: service_healthy
+  mongodb:
+    container_name: jmalcloud_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: mongo_pass
+    image: mongo:7.0.21
+    restart: always
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - ./jmalcloud/db:/data/db
+```
+
+```yaml [完整示例：包含MongoDB服务(5.0以下版本)]
+services:
+  jmalcloud:
+    container_name: jmalcloud
+    image: jmal/jmalcloud:latest
+    environment:
+      MONGODB_URI: mongodb://mongo_user:mongo_pass@mongodb:27017/jmalcloud?authSource=admin
+      PUID: 0
+      PGID: 0
+      LOG_LEVEL: info
+      # 此处建议使用`openssl rand -hex 32`生成密钥
+      ENCRYPTION_SECRET_KEY: ed4b83f7e2e1fc0b0d0d3583d8474cb400c704614ae2b83adc011113a318e878
+      # 此处建议使用`openssl rand -hex 16`生成密钥
+      ENCRYPTION_SALT: 9234d49a5b8d38173f34fbf37bca474b
+    ports:
+      - 8088:8088
+    volumes:
+      - ./jmalcloud/files:/jmalcloud/files
+    restart: always
+    depends_on:
+      mongodb:
+        condition: service_healthy
+  mongodb:
+    container_name: jmalcloud_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: mongo_pass
+    image: mongo:4.4
+    restart: always
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
