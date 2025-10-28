@@ -470,7 +470,7 @@ services:
     volumes:
       - ./jmalcloud/mongodb/data/db:/data/db
       - ./jmalcloud/mongodb/custom:/etc/mongo
-      - ./jmalcloud/jmalcloud/mongodb/backup:/dump
+      - ./jmalcloud/mongodb/backup:/dump
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
