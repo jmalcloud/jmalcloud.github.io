@@ -172,6 +172,13 @@ docker compose up -d
 - **默认值**: `sqlite`
 - **配置建议**: 可选。
 
+#### `MIGRATION`
+- **描述**: 是否从mongoDB迁移到其他数据库，支持迁移至其他3种数据库: `sqlite`, `mysql`, `postgresql`。
+- **类型**: `Boolean`
+- **示例值**: `true`
+- **默认值**: `false`
+- **配置建议**: 可选。
+
 
 ## MySQL
 
@@ -433,3 +440,89 @@ services:
       - ./jmalcloud/db:/data/db
 ```
 :::
+
+## 从MongoDB迁移到其他数据库
+如果您当前使用的是MongoDB作为数据库，并且希望迁移到其他数据库（如SQLite、MySQL或PostgreSQL），可以按照以下步骤进行操作：
+1. **备份数据**: 在进行任何迁移操作之前，务必备份您的MongoDB数据，以防止数据丢失。
+```shell
+docker exec -it jmalcloud_mongodb mongodump -d jmalcloud -o /dump/v2.16.0 --gzip --quiet
+```
+2. **配置环境变量**: 在您的Docker Compose文件或运行命令中，
+3. 设置以下环境变量:
+   - `DATA_BASE_TYPE`: 设置为目标数据库类型（`sqlite`, `mysql`, 或 `postgresql`）。
+   - `MIGRATION`: 设置为`true`以启用迁移功能。
+   - 其他数据库相关的环境变量，如`DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_NAME`, `DATABASE_USER`, 和 `DATABASE_PASSWORD`，根据目标数据库的要求进行配置。
+4. **启动应用**: 使用更新后的配置启动`jmalcloud`应用。
+5. **验证迁移**: 启动后，应用将自动从MongoDB迁移数据到新的数据库。请检查日志以确保迁移过程顺利完成，并验证数据是否正确迁移。
+6. **完成迁移**: 迁移完成后，您可以选择停用或删除MongoDB服务。
+
+**迁移至PostgreSQL参考示例:**
+
+在下面的Docker Compose示例中，展示了如何将数据从MongoDB迁移到PostgreSQL数据库:
+在[PostgreSQL](#PostgreSQL)示例的基础上，添加`MIGRATION`和`DATA_BASE_TYPE`和`MONGODB_URI`环境变量:
+```yaml
+services:
+  mongo:
+    container_name: jmalcloud_mongodb
+    image: registry.cn-beijing.aliyuncs.com/jmalcloud/mongo:4.4
+    environment:
+      TZ: "Asia/Shanghai"
+    volumes:
+      - /mnt/redcatdata/jmal-cloud-server/docker/jmalcloud/mongodb/data/db:/data/db
+      - /mnt/redcatdata/jmal-cloud-server/docker/jmalcloud/mongodb/custom:/etc/mongo
+      - /mnt/redcatdata/jmal-cloud-server/docker/jmalcloud/mongodb/backup:/dump
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    command: --wiredTigerCacheSizeGB 0.5
+  jmalcloud:
+    container_name: jmalcloud_test
+    image: jmal/jmalcloud-sql:latest
+    environment:
+      # 1. MIGRATION 必须设置为true以启用迁移功能
+      MIGRATION: true
+      # 2. 设置目标数据库类型为postgresql
+      DATA_BASE_TYPE: postgresql
+      # 3. 配置PostgreSQL连接参数
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: jmalcloud
+      DATABASE_USER: jmalcloud_user
+      DATABASE_PASSWORD: jmalcloud_pass
+      # 4. 配置MongoDB连接参数，指向现有的MongoDB服务
+      MONGODB_URI: "mongodb://mongo:27017/jmalcloud"
+      PUID: 0
+      PGID: 0
+      LOG_LEVEL: info
+      # 此处建议使用`openssl rand -hex 32`生成密钥
+      ENCRYPTION_SECRET_KEY: ed4b83f7e2e1fc0b0d0d3583d8474cb400c704614ae2b83adc011113a318e878
+      # 此处建议使用`openssl rand -hex 16`生成密钥
+      ENCRYPTION_SALT: 9234d49a5b8d38173f34fbf37bca474b
+    ports:
+      - 8089:8088
+    volumes:
+      - ./jmalcloud/files:/jmalcloud/files
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: library/postgres:17
+    container_name: jmalcloud_postgresql
+    environment:
+      POSTGRES_USER: jmalcloud_user
+      POSTGRES_PASSWORD: jmalcloud_pass
+      POSTGRES_DB: jmalcloud
+      PGDATA: /var/lib/postgresql/data/pgdata
+      TZ: Asia/Shanghai
+    volumes:
+      - ./jmalcloud/db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jmalcloud_user -d jmalcloud"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+```
