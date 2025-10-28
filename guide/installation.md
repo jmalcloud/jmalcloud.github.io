@@ -347,6 +347,7 @@ services:
     container_name: jmalcloud
     image: jmal/jmalcloud:latest
     environment:
+      DATA_BASE_TYPE: mongodb
       MONGODB_URI: mongodb://mongo_user:mongo_pass@your_mongo_host:27017/jmalcloud?authSource=admin
       PUID: 0
       PGID: 0
@@ -368,6 +369,7 @@ services:
     container_name: jmalcloud
     image: jmal/jmalcloud:latest
     environment:
+      DATA_BASE_TYPE: mongodb
       MONGODB_URI: mongodb://mongo_user:mongo_pass@mongodb:27017/jmalcloud?authSource=admin
       PUID: 0
       PGID: 0
@@ -407,6 +409,7 @@ services:
     container_name: jmalcloud
     image: jmal/jmalcloud:latest
     environment:
+      DATA_BASE_TYPE: mongodb
       MONGODB_URI: mongodb://mongo_user:mongo_pass@mongodb:27017/jmalcloud?authSource=admin
       PUID: 0
       PGID: 0
