@@ -464,13 +464,13 @@ docker exec -it jmalcloud_mongodb mongodump -d jmalcloud -o /dump/v2.16.0 --gzip
 services:
   mongo:
     container_name: jmalcloud_mongodb
-    image: registry.cn-beijing.aliyuncs.com/jmalcloud/mongo:4.4
+    image: mongo:4.4
     environment:
       TZ: "Asia/Shanghai"
     volumes:
-      - /mnt/redcatdata/jmal-cloud-server/docker/jmalcloud/mongodb/data/db:/data/db
-      - /mnt/redcatdata/jmal-cloud-server/docker/jmalcloud/mongodb/custom:/etc/mongo
-      - /mnt/redcatdata/jmal-cloud-server/docker/jmalcloud/mongodb/backup:/dump
+      - ./jmalcloud/mongodb/data/db:/data/db
+      - ./jmalcloud/mongodb/custom:/etc/mongo
+      - ./jmalcloud/jmalcloud/mongodb/backup:/dump
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
