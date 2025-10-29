@@ -458,6 +458,7 @@ docker exec -it jmalcloud_mongodb mongodump -d jmalcloud -o /dump/v2.16.0 --gzip
 4. **启动应用**: 使用更新后的配置启动`jmalcloud`应用。
 5. **验证迁移**: 启动后，应用将自动从MongoDB迁移数据到新的数据库。请检查日志以确保迁移过程顺利完成，并验证数据是否正确迁移。
 6. **完成迁移**: 迁移完成后，您可以选择停用或删除MongoDB服务。
+7. **完成迁移后**: 建议执行一次重建索引操作
 
 **迁移至PostgreSQL参考示例:**
 
