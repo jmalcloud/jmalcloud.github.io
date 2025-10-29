@@ -480,6 +480,7 @@ services:
     command: --wiredTigerCacheSizeGB 0.5
   jmalcloud:
     container_name: jmalcloud_test
+    # ⚠️注意这里使用的是jmalcloud-sql镜像
     image: jmal/jmalcloud-sql:latest
     environment:
       # 1. MIGRATION 必须设置为true以启用迁移功能
