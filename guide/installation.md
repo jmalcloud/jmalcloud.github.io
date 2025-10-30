@@ -447,14 +447,15 @@ services:
 ## 从MongoDB迁移到其他数据库
 如果您当前使用的是MongoDB作为数据库，并且希望迁移到其他数据库（如SQLite、MySQL或PostgreSQL），可以按照以下步骤进行操作：
 1. **备份数据**: 在进行任何迁移操作之前，务必备份您的MongoDB数据，以防止数据丢失。
-```shell
-docker exec -it jmalcloud_mongodb mongodump -d jmalcloud -o /dump/v2.16.0 --gzip --quiet
-```
+    ```shell
+    docker exec -it jmalcloud_mongodb mongodump -d jmalcloud -o /dump/v2.16.0 --gzip --quiet
+    ```
 2. **配置环境变量**: 在您的Docker Compose文件或运行命令中，
 3. 设置以下环境变量:
    - `DATA_BASE_TYPE`: 设置为目标数据库类型（`sqlite`, `mysql`, 或 `postgresql`）。
    - `MIGRATION`: 设置为`true`以启用迁移功能。
    - 其他数据库相关的环境变量，如`DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_NAME`, `DATABASE_USER`, 和 `DATABASE_PASSWORD`，根据目标数据库的要求进行配置。
+   -  **确保目标数据库为空数据库，没有任何现有数据。**
 4. **启动应用**: 使用更新后的配置启动`jmalcloud`应用。
 5. **验证迁移**: 启动后，应用将自动从MongoDB迁移数据到新的数据库。请检查日志以确保迁移过程顺利完成，并验证数据是否正确迁移。
 6. **完成迁移**: 迁移完成后，您可以选择停用或删除MongoDB服务。
