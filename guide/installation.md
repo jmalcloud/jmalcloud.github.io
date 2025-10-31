@@ -149,21 +149,21 @@ docker compose up -d
 - **类型**: `String`
 - **示例值**: `3df759ce9f6dab43580830785b67a6afa934a18cd70f7b17ae17e81ee685c02e`
 - **默认值**: `3df759ce9f6dab43580830785b67a6afa934a18cd70f7b17ae17e81ee685c02e`
-- **配置建议**: 必需。如果为空系统会自动生成(位置在/jmalcloud/files/.env), 建议使用至少32字节的随机字符串，可通过 openssl rand -hex 32 生成。
+- **配置建议**: 必需。如果为空系统会自动生成(位置在`/jmalcloud/files/.env`), 建议使用至少32字节的随机字符串，可通过 `openssl rand -hex 32` 生成。
 
 **⚠️更改此密钥的影响**:
 1. 所有直链都将失效。
 2. 所有已启用MFA(两步验证)的用户将无法登录，需要重置MFA。
 3. 已添加的OSS(对象存储)配置将无法使用, 需要修改或重新添加。
 4. LDAP配置需要修改或重新添加。
-5. OnlyOffice需要修改或重新添加。
+5. OnlyOffice配置需要修改或重新添加。
 
 #### `ENCRYPTION_SALT`
 - **描述**: 加密过程中使用的盐值，用于增加加密的安全性，防止彩虹表攻击。每个应用实例应使用唯一的盐值。
 - **类型**: `String`
 - **示例值**: `2b4f6681ea2167b33630e1fd283cade9`
 - **默认值**: `2b4f6681ea2167b33630e1fd283cade9`
-- **配置建议**: 必需。如果为空系统会自动生成(位置在/jmalcloud/files/.env), 建议使用至少16字节的随机字符串，可通过 openssl rand -hex 16 生成。
+- **配置建议**: 必需。如果为空系统会自动生成(位置在`/jmalcloud/files/.env`), 建议使用至少16字节的随机字符串，可通过 `openssl rand -hex 16` 生成。
 
 **⚠️更改此密钥的影响**:
 同上 `ENCRYPTION_SECRET_KEY`。
