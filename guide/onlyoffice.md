@@ -51,7 +51,9 @@ services:
  - jmalcloud: `https://cloud.your-domain.com`
  - onlyoffice: `https://cloud.your-domain.com/office`
 
-此时`回调服务地址`的配置应该为: `https://cloud.your-domain.com/office`
+此时`OnlyOffice地址`的配置应该为: `https://cloud.your-domain.com/office`
+
+`回调服务地址`地址不变, 仍为`jmalcloud`的api地址: `http://your-domain-or-ip:8088/api`
 
 nginx配置示例:
 ```nginx

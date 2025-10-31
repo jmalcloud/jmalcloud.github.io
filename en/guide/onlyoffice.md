@@ -35,7 +35,9 @@ When using nginx reverse proxy for jmalcloud, configuring onlyoffice and jmalclo
 
 - onlyoffice: `https://cloud.your-domain.com/office`
 
-At this time, the configuration of the `callback service address` should be: `https://cloud.your-domain.com/office`
+At this time, the configuration of the `OnlyOffice Address` should be: `https://cloud.your-domain.com/office`
+
+The `callback service address` remains unchanged, and is still the api address of `jmalcloud`: `http://your-domain-or-ip:8088/api`.
 
 nginx configuration example:
 ```nginx
