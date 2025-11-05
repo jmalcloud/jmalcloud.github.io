@@ -8,7 +8,7 @@ docker run -d \
   -p 8088:8088 \
   -v /opt/jmalcloud:/jmalcloud/files \
   --restart always \
-  jmal/jmalcloud-sql:test
+  jmal/jmalcloud-sql:latest
 ```
 
 ## **Docker Compose**
@@ -17,7 +17,7 @@ docker run -d \
 services:
   jmalcloud:
     container_name: jmalcloud
-    image: jmal/jmalcloud-sql:test
+    image: jmal/jmalcloud-sql:latest
     environment:
       PUID: 0
       PGID: 0

@@ -27,7 +27,7 @@
 services:
   jmalcloud:
     container_name: jmalcloud
-    image: jmal/jmalcloud-sql:test
+    image: jmal/jmalcloud-sql:latest
     ports:
       - 8088:8088
     volumes:

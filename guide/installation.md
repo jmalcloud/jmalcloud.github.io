@@ -8,7 +8,7 @@ docker run -d \
   -p 8088:8088 \
   -v ./jmalcloud/files:/jmalcloud/files \
   --restart always \
-  jmal/jmalcloud-sql:test
+  jmal/jmalcloud-sql:latest
 ```
 
 访问 `http://your-domain-or-ip:8088` 即可使用。
@@ -19,7 +19,7 @@ docker run -d \
 services:
   jmalcloud:
     container_name: jmalcloud
-    image: jmal/jmalcloud-sql:test
+    image: jmal/jmalcloud-sql:latest
     environment:
       PUID: 0
       PGID: 0
