@@ -280,7 +280,7 @@ services:
     environment:
       DATA_BASE_TYPE: postgresql
       DATABASE_HOST: postgresql_host
-      DATABASE_PORT: 3306
+      DATABASE_PORT: 5432
       DATABASE_NAME: jmalcloud
       DATABASE_USER: jmalcloud_user
       DATABASE_PASSWORD: jmalcloud_pass
@@ -301,7 +301,7 @@ services:
 ```yaml [完整示例：包含PostgreSQL服务]
 services:
   jmalcloud:
-    container_name: jmalcloud_test
+    container_name: jmalcloud
     image: jmal/jmalcloud-sql:latest
     environment:
       DATA_BASE_TYPE: postgresql

@@ -210,7 +210,7 @@ services:
     environment:
       DATA_BASE_TYPE: postgresql
       DATABASE_HOST: postgresql_host
-      DATABASE_PORT: 3306
+      DATABASE_PORT: 5432
       DATABASE_NAME: jmalcloud
       DATABASE_USER: jmalcloud_user
       DATABASE_PASSWORD: jmalcloud_pass
