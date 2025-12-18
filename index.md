@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: 预览
-      link: https://demo2.jmalx.com:42999/login?username=demo&password=demo1234
+      link: https://jmalcloud.jmalx.com/login?username=demo&password=demo1234
     - theme: alt
       text: 开始使用
       link: /guide/introduction
