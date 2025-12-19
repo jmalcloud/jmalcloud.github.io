@@ -4,7 +4,7 @@
 
 ## 演示Demo:
 
-[Demo](https://demo3.jma.top/login?username=demo&password=demo1234) , 用户名:demo, 密码:demo1234
+[Demo](https://demo3.jmal.top/login?username=demo&password=demo1234) , 用户名:demo, 密码:demo1234
 
 ## 特点
 
