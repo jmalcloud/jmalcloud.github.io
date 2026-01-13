@@ -23,6 +23,6 @@
     "vitepress-plugin-mermaid": "^2.0.17"
   },
   "dependencies": {
-    "pnpm": "^9.14.4"
+    "pnpm": "^9.15.0"
   }
 }
